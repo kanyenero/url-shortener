@@ -8,6 +8,7 @@ import (
 type AppConfiguration struct {
 	Database string             `json:"database"`
 	Redis    RedisConfiguration `json:"redis"`
+	Http     HttpConfiguration  `json:"http"`
 }
 
 type RedisConfiguration struct {
@@ -15,6 +16,12 @@ type RedisConfiguration struct {
 	Port     string `mapstructure:"port"`
 	Password string `mapstructure:"password"`
 	Db       int    `mapstructure:"db"`
+}
+
+type HttpConfiguration struct {
+	Port         string `mapstructure:"port"`
+	ReadTimeout  int    `mapstructure:"readTimeout"`
+	WriteTimeout int    `mapstructure:"writeTimeout"`
 }
 
 func Initialize(configPath string) (*AppConfiguration, error) {

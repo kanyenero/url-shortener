@@ -2,10 +2,13 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
 	"net"
+	"net/http"
+	"time"
 	"url-shortener/internal/config"
 	httpHandlers "url-shortener/internal/http"
 	"url-shortener/internal/repository"
@@ -46,5 +49,18 @@ func Run(configPath string) {
 		UrlHandler: *httpHandlers.CreateUrlHandler(&services.UrlService),
 	}
 
-	fmt.Println(handlers)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /a/", handlers.UrlHandler.Set)
+	mux.HandleFunc("GET /s/", handlers.UrlHandler.Get)
+
+	httpServer := http.Server{
+		Addr:         ":" + cfg.Http.Port,
+		Handler:      mux,
+		ReadTimeout:  time.Duration(cfg.Http.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(cfg.Http.WriteTimeout) * time.Second,
+	}
+
+	if err = httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatalf("%s", err.Error())
+	}
 }
