@@ -46,7 +46,7 @@ func Run(configPath string) {
 	}
 
 	handlers := httpHandlers.Handlers{
-		UrlHandler: *httpHandlers.CreateUrlHandler(&services.UrlService),
+		UrlHandler: *httpHandlers.NewUrlHandler(&services.UrlService),
 	}
 
 	mux := http.NewServeMux()

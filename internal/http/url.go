@@ -14,20 +14,15 @@ type UrlHandler struct {
 	urlService *service.UrlService
 }
 
-func CreateUrlHandler(urlService *service.UrlService) *UrlHandler {
+func NewUrlHandler(urlService *service.UrlService) *UrlHandler {
 	return &UrlHandler{urlService}
 }
 
 func (handler *UrlHandler) Get(writer http.ResponseWriter, request *http.Request) {
-	if request.RequestURI == "/s/" {
-		writer.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	requestURIValid, err := regexp.MatchString(`/s/[A-z0-9]{8}$`, request.RequestURI)
 	if !requestURIValid {
 		writer.WriteHeader(http.StatusBadRequest)
-		log.Println("Invalid RequestURI")
+		log.Println("invalid request uri")
 		return
 	}
 	if err != nil {
@@ -51,15 +46,17 @@ func (handler *UrlHandler) Get(writer http.ResponseWriter, request *http.Request
 }
 
 func (handler *UrlHandler) Set(writer http.ResponseWriter, request *http.Request) {
-	if request.RequestURI == "/a/" {
+	requestURIValid := strings.Contains(request.RequestURI, "/a/?url=")
+	if !requestURIValid {
 		writer.WriteHeader(http.StatusBadRequest)
+		log.Println("invalid request uri")
 		return
 	}
 
 	requestUrl := request.URL.Query().Get("url")
 	if requestUrl == "" {
 		writer.WriteHeader(http.StatusBadRequest)
-		log.Println("Query parameter 'url' is missing")
+		log.Println("query parameter 'url' is missing")
 		return
 	}
 
