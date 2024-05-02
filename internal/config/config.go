@@ -6,7 +6,15 @@ import (
 )
 
 type AppConfiguration struct {
-	Database string `json:"database"`
+	Database string             `json:"database"`
+	Redis    RedisConfiguration `json:"redis"`
+}
+
+type RedisConfiguration struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+	Db       int    `mapstructure:"db"`
 }
 
 func Initialize(configPath string) (*AppConfiguration, error) {
