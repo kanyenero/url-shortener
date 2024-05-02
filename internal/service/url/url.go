@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"hash/adler32"
+	neturl "net/url"
 	"url-shortener/internal/repository"
 )
 
@@ -26,8 +27,13 @@ func (service *UrlService) SetUrl(url string) (string, error) {
 		return "", errors.New("url is empty")
 	}
 
+	_, err := neturl.ParseRequestURI(url)
+	if err != nil {
+		return "", err
+	}
+
 	hasher := adler32.New()
-	_, err := hasher.Write([]byte(url))
+	_, err = hasher.Write([]byte(url))
 	if err != nil {
 		return "", err
 	}
