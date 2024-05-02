@@ -23,7 +23,7 @@ func TestUrlHandler_Get(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /s/", hdl.Get)
 	srv := httptest.NewServer(mux)
-	srv.Config.Addr = ":8081"
+	srv.Config.Addr = ":8080"
 	defer srv.Close()
 
 	positiveTestCases := []struct {
